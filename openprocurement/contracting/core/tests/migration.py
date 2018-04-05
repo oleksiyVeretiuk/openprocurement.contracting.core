@@ -4,7 +4,8 @@ import json
 import unittest
 
 from copy import deepcopy
-from openprocurement.tender.belowthreshold.models import Tender
+# from openprocurement.tender.belowthreshold.models import Tender
+from openprocurement.auctions.flash.models import Auction as Tender
 from openprocurement.api.utils import get_now
 from openprocurement.contracting.core.models import Contract
 from openprocurement.contracting.core.migration import (
