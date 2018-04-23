@@ -34,7 +34,7 @@ contract_create_role = (whitelist(
     'id', 'awardID', 'contractID', 'contractNumber', 'title', 'title_en',
     'title_ru', 'description', 'description_en', 'description_ru', 'status',
     'period', 'value', 'dateSigned', 'items', 'suppliers',
-    'procuringEntity', 'owner', 'tender_token', 'tender_id', 'mode'
+    'procuringEntity', 'owner', 'auction_token', 'auction_id', 'mode'
 ))
 
 contract_edit_role = (whitelist(
@@ -47,7 +47,7 @@ contract_view_role = (whitelist(
     'id', 'awardID', 'contractID', 'dateModified', 'contractNumber', 'title',
     'title_en', 'title_ru', 'description', 'description_en', 'description_ru',
     'status', 'period', 'value', 'dateSigned', 'documents', 'items',
-    'suppliers', 'procuringEntity', 'owner', 'mode', 'tender_id', 'changes',
+    'suppliers', 'procuringEntity', 'owner', 'mode', 'auction_id', 'changes',
     'amountPaid', 'terminationDetails', 'contract_amountPaid',
 ))
 
@@ -171,8 +171,8 @@ class Contract(SchematicsDocument, BaseContract):
     dateModified = IsoDateTimeType()
     _attachments = DictType(DictType(BaseType), default=dict())  # couchdb attachments
     items = ListType(ModelType(Item), required=False, min_size=1, validators=[validate_items_uniq])
-    tender_token = StringType(required=True)
-    tender_id = StringType(required=True)
+    auction_token = StringType(required=True)
+    auction_id = StringType(required=True)
     owner_token = StringType(default=lambda: uuid4().hex)
     owner = StringType()
     mode = StringType(choices=['test'])
@@ -203,13 +203,13 @@ class Contract(SchematicsDocument, BaseContract):
 
     def __local_roles__(self):
         return dict([('{}_{}'.format(self.owner, self.owner_token), 'contract_owner'),
-                     ('{}_{}'.format(self.owner, self.tender_token), 'tender_owner')])
+                     ('{}_{}'.format(self.owner, self.auction_token), 'auction_owner')])
 
     def __acl__(self):
         acl = [
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'edit_contract'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_contract_documents'),
-            (Allow, '{}_{}'.format(self.owner, self.tender_token), 'generate_credentials')
+            (Allow, '{}_{}'.format(self.owner, self.auction_token), 'generate_credentials')
         ]
         return acl
 
