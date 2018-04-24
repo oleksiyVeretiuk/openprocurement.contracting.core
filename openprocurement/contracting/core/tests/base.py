@@ -14,9 +14,9 @@ test_contract_data = {
         {
             u"description": u"футляри до державних нагород",
             u"classification": {
-                u"scheme": u"CPV",
+                u"scheme": u"CAV",
                 u"description": u"Cartons",
-                u"id": u"44617100-9"
+                u"id": u"70122000-2"
             },
             u"additionalClassifications": [
                 {
@@ -99,8 +99,8 @@ test_contract_data = {
     u"awardID": u"8481d7eb01694c25b18658036c236c5d",
     u"id": uuid4().hex,
     u"contractID": u"UA-2016-03-18-000001-1",
-    u"tender_id": uuid4().hex,
-    u"tender_token": uuid4().hex,
+    u"auction_id": uuid4().hex,
+    u"auction_token": uuid4().hex,
     u"owner": u"broker"
 }
 

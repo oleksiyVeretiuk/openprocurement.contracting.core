@@ -99,18 +99,18 @@ class TestContract(unittest.TestCase):
             "valueAddedTaxIncluded": True}
 
         path = os.path.dirname(
-            __file__) + '/data/tender-contract-complete.json'
+            __file__) + '/data/auction-contract-complete.json'
         with open(path) as temp_file:
-            self.tender_data = json.load(temp_file)
-        self.tender_data['contracts'][0]['amountPaid'] = self.amountPaid
+            self.auction_data = json.load(temp_file)
+        self.auction_data['contracts'][0]['amountPaid'] = self.amountPaid
 
         self.owner_token = uuid4().hex
-        self.tender_token = uuid4().hex
+        self.auction_token = uuid4().hex
         self.owner = uuid4().hex
-        self.contract = Contract(self.tender_data['contracts'][0])
+        self.contract = Contract(self.auction_data['contracts'][0])
         self.contract.amountPaid = self.amountPaid
 
-        self.contract.tender_token = self.tender_token
+        self.contract.auction_token = self.auction_token
         self.contract.owner = self.owner
         self.contract.owner_token = self.owner_token
 
@@ -123,7 +123,7 @@ class TestContract(unittest.TestCase):
     def test_local_roles(self):
         self.assertEqual(self.contract.__local_roles__(), dict(
             [('{}_{}'.format(self.owner, self.owner_token), 'contract_owner'),
-             ('{}_{}'.format(self.owner, self.tender_token), 'tender_owner')]))
+             ('{}_{}'.format(self.owner, self.auction_token), 'auction_owner')]))
 
     def test_acl(self):
 
@@ -133,7 +133,7 @@ class TestContract(unittest.TestCase):
                   'edit_contract'),
                  (Allow, '{}_{}'.format(self.owner, self.owner_token),
                   'upload_contract_documents'),
-                 (Allow, '{}_{}'.format(self.owner, self.tender_token),
+                 (Allow, '{}_{}'.format(self.owner, self.auction_token),
                   'generate_credentials')
              ]
          )

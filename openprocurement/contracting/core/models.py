@@ -28,7 +28,7 @@ from openprocurement.api.models.auction_models.models import (
     schematics_default_role,
     schematics_embedded_role,
 )
-from openprocurement.auctions.core.models import Administrator_role
+from openprocurement.auctions.core.models import Administrator_role, flashItem
 
 contract_create_role = (whitelist(
     'id', 'awardID', 'contractID', 'contractNumber', 'title', 'title_en',
@@ -170,7 +170,7 @@ class Contract(SchematicsDocument, BaseContract):
     revisions = ListType(ModelType(Revision), default=list())
     dateModified = IsoDateTimeType()
     _attachments = DictType(DictType(BaseType), default=dict())  # couchdb attachments
-    items = ListType(ModelType(Item), required=False, min_size=1, validators=[validate_items_uniq])
+    items = ListType(ModelType(flashItem), required=False, min_size=1, validators=[validate_items_uniq])
     auction_token = StringType(required=True)
     auction_id = StringType(required=True)
     owner_token = StringType(default=lambda: uuid4().hex)
@@ -221,7 +221,11 @@ class Contract(SchematicsDocument, BaseContract):
             The data to be imported.
         """
         data = self.convert(raw_data, **kw)
-        del_keys = [k for k in data.keys() if data[k] == self.__class__.fields[k].default or data[k] == getattr(self, k)]
+        del_keys = [
+            k for k in data.keys()
+            if data[k] == self.__class__.fields[k].default
+            or data[k] == getattr(self, k)
+        ]
         for k in del_keys:
             del data[k]
 
@@ -245,6 +249,9 @@ class Contract(SchematicsDocument, BaseContract):
     @serializable(serialized_name='amountPaid', serialize_when_none=False, type=ModelType(Value))
     def contract_amountPaid(self):
         if self.amountPaid:
-            return Value(dict(amount=self.amountPaid.amount,
-                              currency=self.value.currency,
-                              valueAddedTaxIncluded=self.value.valueAddedTaxIncluded))
+            return Value(
+                dict(
+                    amount=self.amountPaid.amount,
+                    currency=self.value.currency,
+                    valueAddedTaxIncluded=self.value.valueAddedTaxIncluded
+                ))
