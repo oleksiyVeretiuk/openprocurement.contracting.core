@@ -8,6 +8,9 @@ from openprocurement.contracting.core.adapters import ContractConfigurator
 from openprocurement.contracting.core.models import Contract
 from openprocurement.contracting.core.includeme import includeme
 from openprocurement.api.interfaces import IContentConfigurator
+from openprocurement.contracting.core.tests import (
+    contract, traversal, utils, validation
+)
 
 
 class TestIncludeme(unittest.TestCase):
@@ -39,6 +42,10 @@ class TestIncludeme(unittest.TestCase):
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestIncludeme))
+    suite.addTest(contract.suite())
+    suite.addTest(traversal.suite())
+    suite.addTest(utils.suite())
+    suite.addTest(validation.suite())
     return suite
 
 

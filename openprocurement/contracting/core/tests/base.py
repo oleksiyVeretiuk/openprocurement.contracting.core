@@ -169,3 +169,9 @@ class BaseContractContentWebTest(BaseContractWebTest):
         response = self.app.patch_json('/contracts/{}/credentials?acc_token={}'.format(
             self.contract_id, self.initial_data['tender_token']), {'data': {}})
         self.contract_token = response.json['access']['token']
+
+
+def error_handler(variable):
+    exception = Exception()
+    exception.message = variable
+    return exception

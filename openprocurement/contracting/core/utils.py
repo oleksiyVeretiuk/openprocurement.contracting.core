@@ -3,7 +3,40 @@ from openprocurement.api.utils import (
     apply_data_patch,
     generate_id,
 )
-from openprocurement.contracting.api.utils import save_contract
+
+
+def save_contract(request):
+    """ Save contract object to database
+    :param request:
+    :return: True if Ok
+    """
+    contract = request.validated['contract']
+
+    if contract.mode == u'test':
+        set_modetest_titles(contract)
+    patch = get_revision_changes(contract.serialize("plain"),
+                                 request.validated['contract_src'])
+    if patch:
+        contract.revisions.append(
+            Revision({'author': request.authenticated_userid,
+                      'changes': patch, 'rev': contract.rev}))
+        old_date_modified = contract.dateModified
+        contract.dateModified = get_now()
+        try:
+            contract.store(request.registry.db)
+        except ModelValidationError, e:  # pragma: no cover
+            for i in e.message:
+                request.errors.add('body', i, e.message[i])
+            request.errors.status = 422
+        except Exception, e:  # pragma: no cover
+            request.errors.add('body', 'data', str(e))
+        else:
+            LOGGER.info('Saved contract {}: dateModified {} -> {}'.format(
+                contract.id, old_date_modified and old_date_modified.isoformat(),
+                contract.dateModified.isoformat()),
+                extra=context_unpack(request, {'MESSAGE_ID': 'save_contract'},
+                                     {'CONTRACT_REV': contract.rev}))
+            return True
 
 
 class isContract(object):
