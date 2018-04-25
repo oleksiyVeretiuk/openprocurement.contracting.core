@@ -5,6 +5,7 @@ from mock import patch, MagicMock
 from pyramid.request import Request
 
 from openprocurement.contracting.core.models import Contract, Change
+from openprocurement.contracting.core.validation import validate_contract_data
 from openprocurement.contracting.core.tests.base import error_handler
 from openprocurement.contracting.core.validation import (
     validate_patch_contract_data,
@@ -220,9 +221,9 @@ class TestValidateContractData(unittest.TestCase):
         self.request.contract_from_data = self.model
         self.request.errors = MagicMock()
 
-    @patch('openprocurement.contracting.api.validation.validate_data')
-    @patch('openprocurement.contracting.api.validation.validate_json_data')
-    @patch('openprocurement.contracting.api.validation.update_logging_context')
+    @patch('openprocurement.contracting.core.validation.validate_data')
+    @patch('openprocurement.contracting.core.validation.validate_json_data')
+    @patch('openprocurement.contracting.core.validation.update_logging_context')
     def test_validate_contract_data_no_error(self,
                                              mocker_update_logging_context,
                                              mocker_validate_json_data,
@@ -231,16 +232,17 @@ class TestValidateContractData(unittest.TestCase):
         mocker_validate_json_data.return_value = {'id': 'fake_id'}
         mocker_validate_data.return_value = self.expected_result
 
-        self.assertEquals(validate_contract_data(self.request),
-                          self.expected_result)
+        self.assertEquals(
+            validate_contract_data(self.request),
+            self.expected_result
+        )
 
-    @patch('openprocurement.contracting.api.validation.error_handler')
-    @patch('openprocurement.contracting.api.validation.validate_json_data')
-    @patch('openprocurement.contracting.api.validation.update_logging_context')
-    def test_validate_contract_data_with_error(self,
-                                               mocker_update_logging_context,
-                                               mocker_validate_json_data,
-                                               mocker_error_handler):
+    @patch('openprocurement.contracting.core.validation.error_handler')
+    @patch('openprocurement.contracting.core.validation.validate_json_data')
+    @patch('openprocurement.contracting.core.validation.update_logging_context')
+    def test_validate_contract_data_with_error(
+        self, mocker_update_logging_context, mocker_validate_json_data, mocker_error_handler
+    ):
         mocker_update_logging_context.return_value = True
         mocker_validate_json_data.return_value = {'id': 'fake_id'}
         checked_accreditation = MagicMock(return_value=False)
@@ -249,7 +251,7 @@ class TestValidateContractData(unittest.TestCase):
 
         with self.assertRaises(Exception) as cm:
             validate_contract_data(self.request)
-        self.assertEqual(cm.exception.errors.message.status, 403)
+        self.assertEqual(self.request.errors.status, 403)
 
 
 def suite():

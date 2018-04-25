@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-from openprocurement.api.utils import update_logging_context, raise_operation_error
+from openprocurement.api.utils import (
+    error_handler,
+    raise_operation_error,
+    update_logging_context,
+)
 from openprocurement.api.validation import validate_json_data, validate_data, OPERATIONS
 from openprocurement.contracting.core.models import Change
 

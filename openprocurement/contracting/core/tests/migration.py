@@ -14,9 +14,9 @@ from openprocurement.contracting.core.migration import (
     SCHEMA_VERSION
 )
 from openprocurement.contracting.core.tests.base import (
-    test_contract_data,
     BaseWebTest
 )
+from openprocurement.contracting.core.tests.fixtures import contract_fixtures
 
 
 class MigrateTest(BaseWebTest):
@@ -63,7 +63,7 @@ class MigrateTest(BaseWebTest):
 
     def test_migrate_from1to2(self):
         set_db_schema_version(self.db, 1)
-        u = Contract(test_contract_data)
+        u = Contract(contract_fixtures.test_contract_data)
         u.contractID = "UA-X"
         u.store(self.db)
         data = self.db.get(u.id)
