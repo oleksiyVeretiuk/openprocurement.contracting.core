@@ -1,0 +1,13 @@
+---
+auctions.core:
+  plugins:
+    auctions.flash:
+      aliases: []
+      use_default: true
+      migration: false
+contracting.core:
+  plugins:
+    contracting.common:
+      aliases: []
+      migration: false
+...
