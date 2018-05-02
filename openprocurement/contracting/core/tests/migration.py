@@ -4,6 +4,8 @@ import json
 import unittest
 
 from copy import deepcopy
+from mock import MagicMock, patch
+
 from openprocurement.auctions.flash.models import Auction
 from openprocurement.api.utils import get_now
 from openprocurement.contracting.core.models import Contract
@@ -86,8 +88,14 @@ class MigrateTest(BaseWebTest):
         self.assertIn('KeyID=', migrated_item['documents'][0]['url'])
         self.assertIn('Signature=', migrated_item['documents'][0]['url'])
 
-    def test_migrate_data_return_none(self):
-        self.app.app.registry.settings['plugins'] = 'fake_plugin'
+    @patch('openprocurement.contracting.core.migration.get_plugins')
+    @patch('openprocurement.contracting.core.migration.read_yaml')
+    def test_migrate_data_return_none(self, mock_read_yaml, mock_get_plugins):
+        mock_read_yaml.return_value = None
+        mock_get_plugins.return_value = {
+            'fake_plugin':
+                {'plugins': 'fake_plugin2'}
+        }
         self.assertIsNone(migrate_data(self.app.app.registry))
 
 
