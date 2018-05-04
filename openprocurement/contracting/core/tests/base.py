@@ -9,7 +9,7 @@ from schematics.types import StringType
 from schematics.types.compound import ModelType
 from uuid import uuid4
 
-from openprocurement.api.models.auction_models.models import (
+from openprocurement.api.models.auction_models import (
     Contract as BaseContract,
     Document as BaseDocument,
     IsoDateTimeType,

@@ -16,7 +16,7 @@ from openprocurement.api.utils import (
     get_revision_changes,
     set_modetest_titles,
 )
-from openprocurement.api.models.auction_models.models import Revision
+from openprocurement.api.models.auction_models import Revision
 from openprocurement.contracting.core.traversal import factory
 
 
