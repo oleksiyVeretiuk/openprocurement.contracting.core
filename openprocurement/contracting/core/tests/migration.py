@@ -89,9 +89,7 @@ class MigrateTest(BaseWebTest):
         self.assertIn('Signature=', migrated_item['documents'][0]['url'])
 
     @patch('openprocurement.contracting.core.migration.get_plugins')
-    @patch('openprocurement.contracting.core.migration.read_yaml')
-    def test_migrate_data_return_none(self, mock_read_yaml, mock_get_plugins):
-        mock_read_yaml.return_value = None
+    def test_migrate_data_return_none(self, mock_get_plugins):
         mock_get_plugins.return_value = {
             'fake_plugin':
                 {'plugins': 'fake_plugin2'}

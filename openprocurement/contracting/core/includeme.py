@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from logging import getLogger
-from pkg_resources import get_distribution, iter_entry_points
+from pkg_resources import get_distribution
 from pyramid.interfaces import IRequest
 
 from openprocurement.contracting.core.utils import (
     isContract,
     register_contract_contractType
 )
+from openprocurement.api.app import get_evenly_plugins
 from openprocurement.api.interfaces import IContentConfigurator
 from openprocurement.contracting.core.models import IContract
 from openprocurement.contracting.core.adapters import ContractConfigurator
@@ -19,7 +20,7 @@ PKG = get_distribution(__package__)
 LOGGER = getLogger(PKG.project_name)
 
 
-def includeme(config, plugin_config=None):
+def includeme(config, plugin_map):
     LOGGER.info('Init contracting.core plugin.')
     # contractType plugins support
     add_design()
@@ -35,9 +36,4 @@ def includeme(config, plugin_config=None):
                                     IContentConfigurator)
 
     # search for plugins
-    settings = config.get_settings()
-    plugins = settings.get('plugins') and settings['plugins'].split(',')
-    for entry_point in iter_entry_points('openprocurement.contracting.core.plugins'):
-        if not plugins or entry_point.name in plugins:
-            plugin = entry_point.load()
-            plugin(config)
+    get_evenly_plugins(config, plugin_map['plugins'], 'openprocurement.contracting.core.plugins')

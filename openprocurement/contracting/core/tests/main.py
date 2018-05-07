@@ -13,17 +13,19 @@ from openprocurement.contracting.core.tests import (
 )
 
 
+FAKE_PLUGIN_CONFIG = {'plugins': 'fake_plugin'}
+
 class TestIncludeme(unittest.TestCase):
     """Test if plugin load works correct"""
 
     def setUp(self):
         self.contract = Contract()
         self.request = Request(dict())
-        self.config = Configurator(settings={'plugins': 'fake_plugin'})
+        self.config = Configurator(settings=FAKE_PLUGIN_CONFIG)
         self.config.include("cornice")
 
     def test_includeme(self):
-        includeme(self.config)
+        includeme(self.config, FAKE_PLUGIN_CONFIG)
 
         self.assertEquals(self.config.registry.contract_contractTypes, {})
 
