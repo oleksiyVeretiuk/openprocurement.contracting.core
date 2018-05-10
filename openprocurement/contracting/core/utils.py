@@ -68,7 +68,7 @@ def contract_from_data(request, data, raise_error=True, create=True):
     contractType = data.get('contractType', 'common')
     model = request.registry.contract_contractTypes.get(contractType)
     if model is None and raise_error:
-        request.errors.add('data', 'contractType', 'Not implemented')
+        request.errors.add('body', 'data', 'contractType Not implemented')
         request.errors.status = 415
         raise error_handler(request)
     if model is not None and create:
