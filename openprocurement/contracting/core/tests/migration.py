@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
-import os
 import json
+import os
 import unittest
 
 from copy import deepcopy
 from mock import MagicMock, patch
 
-from openprocurement.auctions.flash.models import Auction
 from openprocurement.api.utils import get_now
 from openprocurement.contracting.core.models import Contract
 from openprocurement.contracting.core.migration import (
-    migrate_data,
+    SCHEMA_VERSION,
     get_db_schema_version,
+    migrate_data,
     set_db_schema_version,
-    SCHEMA_VERSION
 )
 from openprocurement.contracting.core.tests.base import (
     BaseWebTest
 )
 from openprocurement.contracting.core.tests.fixtures import contract_fixtures
+from openprocurement.auctions.flash.models import Auction
 
 
 class MigrateTest(BaseWebTest):
