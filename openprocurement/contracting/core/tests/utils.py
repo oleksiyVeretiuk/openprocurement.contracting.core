@@ -172,7 +172,7 @@ class TestApiFucntions(unittest.TestCase):
             contract_from_data(self.request, dict())
         self.assertEqual(cm.exception.message.errors.status, 415)
         cm.exception.message.errors.add.assert_called_once_with(
-            'data', 'contractType', 'Not implemented'
+            'body', 'data', 'contractType Not implemented'
         )
 
     def test_contract_from_data_success(self):
