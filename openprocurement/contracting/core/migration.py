@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import logging
+from pyramid.config import Configurator
+
 from openprocurement.api.utils import get_now
-from openprocurement.contracting.api.traversal import Root
+from openprocurement.auctions.core.utils import get_plugins
 from openprocurement.contracting.core.models import Contract
+from openprocurement.contracting.core.traversal import Root
 
 LOGGER = logging.getLogger(__name__)
 SCHEMA_VERSION = 2
@@ -21,7 +24,11 @@ def set_db_schema_version(db, version):
 
 
 def migrate_data(registry, destination=None):
-    if registry.settings.get('plugins') and 'contracting' not in registry.settings['plugins'].split(','):
+    if isinstance(registry, Configurator):
+        registry = registry.registry
+    plugins_config = registry.app_meta(['plugins'])
+    existing_plugins = get_plugins(plugins_config)
+    if registry.app_meta(('plugins',)) and 'contracting.core' not in existing_plugins:
         return
     cur_version = get_db_schema_version(registry.db)
     if cur_version == SCHEMA_VERSION:
@@ -43,11 +50,11 @@ def from0to1(registry):
         doc = i.doc
 
         if "suppliers" not in doc:
-            tender_id = doc['tender_id']
+            auction_id = doc['auction_id']
             rel_award = doc['awardID']
-            tender_doc = registry.db.get(tender_id)
+            auction_doc = registry.db.get(auction_id)
 
-            rel_award = [aw for aw in tender_doc['awards'] if aw['id'] == doc['awardID']]
+            rel_award = [aw for aw in auction_doc['awards'] if aw['id'] == doc['awardID']]
             if not rel_award:
                 LOGGER.warn("Related award {} for contract {} not found!".
                             format(doc['awardID'], doc['id']), extra={'MESSAGE_ID': 'migrate_data'})

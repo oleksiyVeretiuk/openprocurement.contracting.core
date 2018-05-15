@@ -8,7 +8,12 @@ from openprocurement.contracting.core.adapters import ContractConfigurator
 from openprocurement.contracting.core.models import Contract
 from openprocurement.contracting.core.includeme import includeme
 from openprocurement.api.interfaces import IContentConfigurator
+from openprocurement.contracting.core.tests import (
+    contract, traversal, utils, validation
+)
 
+
+FAKE_PLUGIN_CONFIG = {'plugins': 'fake_plugin'}
 
 class TestIncludeme(unittest.TestCase):
     """Test if plugin load works correct"""
@@ -16,11 +21,11 @@ class TestIncludeme(unittest.TestCase):
     def setUp(self):
         self.contract = Contract()
         self.request = Request(dict())
-        self.config = Configurator(settings={'plugins': 'fake_plugin'})
+        self.config = Configurator(settings=FAKE_PLUGIN_CONFIG)
         self.config.include("cornice")
 
     def test_includeme(self):
-        includeme(self.config)
+        includeme(self.config, FAKE_PLUGIN_CONFIG)
 
         self.assertEquals(self.config.registry.contract_contractTypes, {})
 
@@ -39,6 +44,10 @@ class TestIncludeme(unittest.TestCase):
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestIncludeme))
+    suite.addTest(contract.suite())
+    suite.addTest(traversal.suite())
+    suite.addTest(utils.suite())
+    suite.addTest(validation.suite())
     return suite
 
 

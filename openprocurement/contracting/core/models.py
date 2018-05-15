@@ -8,29 +8,35 @@ from schematics.types.compound import ModelType, DictType
 from schematics.types.serializable import serializable
 from schematics.exceptions import ValidationError
 from schematics.transforms import whitelist, blacklist
-from openprocurement.api.utils import get_now
-from openprocurement.api.models import Contract as BaseContract
-from openprocurement.api.models import Document as BaseDocument
-from openprocurement.api.models import Organization as BaseOrganization
-from openprocurement.api.models import ContactPoint as BaseContactPoint
-from openprocurement.api.models import CPVClassification as BaseCPVClassification
-from openprocurement.api.models import Item as BaseItem
-from openprocurement.api.models import AdditionalClassification as BaseAdditionalClassification
-from openprocurement.api.models import (Model, ListType, Revision, Value,
-                                        IsoDateTimeType)
+
 from openprocurement.api.validation import validate_items_uniq
-from openprocurement.api.models import (
+from openprocurement.api.utils import get_now
+from openprocurement.api.models.auction_models import (
+    Contract as BaseContract,
+    Document as BaseDocument,
+    Organization as BaseOrganization,
+    CPVClassification as BaseCPVClassification,
+    Item as BaseItem,
+    AdditionalClassification as BaseAdditionalClassification,
+    Model,
+    ListType,
+    Revision,
+    Value,
+    IsoDateTimeType,
     plain_role,
     schematics_default_role,
-    schematics_embedded_role
+    schematics_embedded_role,
 )
-from openprocurement.tender.core.models import Administrator_role
+from openprocurement.api.models.common import (
+    ContactPoint as BaseContactPoint,
+)
+from openprocurement.auctions.core.models import Administrator_role, flashItem
 
 contract_create_role = (whitelist(
     'id', 'awardID', 'contractID', 'contractNumber', 'title', 'title_en',
     'title_ru', 'description', 'description_en', 'description_ru', 'status',
     'period', 'value', 'dateSigned', 'items', 'suppliers',
-    'procuringEntity', 'owner', 'tender_token', 'tender_id', 'mode'
+    'procuringEntity', 'owner', 'auction_token', 'auction_id', 'mode'
 ))
 
 contract_edit_role = (whitelist(
@@ -43,7 +49,7 @@ contract_view_role = (whitelist(
     'id', 'awardID', 'contractID', 'dateModified', 'contractNumber', 'title',
     'title_en', 'title_ru', 'description', 'description_en', 'description_ru',
     'status', 'period', 'value', 'dateSigned', 'documents', 'items',
-    'suppliers', 'procuringEntity', 'owner', 'mode', 'tender_id', 'changes',
+    'suppliers', 'procuringEntity', 'owner', 'mode', 'auction_id', 'changes',
     'amountPaid', 'terminationDetails', 'contract_amountPaid',
 ))
 
@@ -166,16 +172,18 @@ class Contract(SchematicsDocument, BaseContract):
     revisions = ListType(ModelType(Revision), default=list())
     dateModified = IsoDateTimeType()
     _attachments = DictType(DictType(BaseType), default=dict())  # couchdb attachments
-    items = ListType(ModelType(Item), required=False, min_size=1, validators=[validate_items_uniq])
-    tender_token = StringType(required=True)
-    tender_id = StringType(required=True)
+    items = ListType(ModelType(flashItem), required=False, min_size=1, validators=[validate_items_uniq])
+    auction_token = StringType(required=True)
+    auction_id = StringType(required=True)
     owner_token = StringType(default=lambda: uuid4().hex)
     owner = StringType()
     mode = StringType(choices=['test'])
     status = StringType(choices=['terminated', 'active'], default='active')
     suppliers = ListType(ModelType(Organization), min_size=1, max_size=1)
-    # The entity managing the procurement, which may be different from the buyer
-    # who is paying / using the items being procured.
+    '''
+    The entity managing the procurement, which may be different from the buyer
+    who is paying / using the items being procured.
+    '''
     procuringEntity = ModelType(ProcuringEntity, required=True)
     changes = ListType(ModelType(Change), default=list())
     documents = ListType(ModelType(Document), default=list())
@@ -197,13 +205,13 @@ class Contract(SchematicsDocument, BaseContract):
 
     def __local_roles__(self):
         return dict([('{}_{}'.format(self.owner, self.owner_token), 'contract_owner'),
-                     ('{}_{}'.format(self.owner, self.tender_token), 'tender_owner')])
+                     ('{}_{}'.format(self.owner, self.auction_token), 'auction_owner')])
 
     def __acl__(self):
         acl = [
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'edit_contract'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_contract_documents'),
-            (Allow, '{}_{}'.format(self.owner, self.tender_token), 'generate_credentials')
+            (Allow, '{}_{}'.format(self.owner, self.auction_token), 'generate_credentials')
         ]
         return acl
 
@@ -215,7 +223,11 @@ class Contract(SchematicsDocument, BaseContract):
             The data to be imported.
         """
         data = self.convert(raw_data, **kw)
-        del_keys = [k for k in data.keys() if data[k] == self.__class__.fields[k].default or data[k] == getattr(self, k)]
+        del_keys = [
+            k for k in data.keys()
+            if data[k] == self.__class__.fields[k].default
+            or data[k] == getattr(self, k)
+        ]
         for k in del_keys:
             del data[k]
 
@@ -239,6 +251,9 @@ class Contract(SchematicsDocument, BaseContract):
     @serializable(serialized_name='amountPaid', serialize_when_none=False, type=ModelType(Value))
     def contract_amountPaid(self):
         if self.amountPaid:
-            return Value(dict(amount=self.amountPaid.amount,
-                              currency=self.value.currency,
-                              valueAddedTaxIncluded=self.value.valueAddedTaxIncluded))
+            return Value(
+                dict(
+                    amount=self.amountPaid.amount,
+                    currency=self.value.currency,
+                    valueAddedTaxIncluded=self.value.valueAddedTaxIncluded
+                ))

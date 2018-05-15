@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
-import os
 import json
+import os
 import unittest
 
 from copy import deepcopy
-from openprocurement.tender.belowthreshold.models import Tender
+from mock import MagicMock, patch
+
 from openprocurement.api.utils import get_now
 from openprocurement.contracting.core.models import Contract
 from openprocurement.contracting.core.migration import (
-    migrate_data,
+    SCHEMA_VERSION,
     get_db_schema_version,
+    migrate_data,
     set_db_schema_version,
-    SCHEMA_VERSION
 )
 from openprocurement.contracting.core.tests.base import (
-    test_contract_data,
     BaseWebTest
 )
+from openprocurement.contracting.core.tests.fixtures import contract_fixtures
+from openprocurement.auctions.flash.models import Auction
 
 
 class MigrateTest(BaseWebTest):
@@ -33,20 +35,20 @@ class MigrateTest(BaseWebTest):
     def test_migrate_from0to1(self):
         set_db_schema_version(self.db, 0)
 
-        with open(os.path.join(os.path.dirname(__file__), 'data/tender-contract-complete.json'), 'r') as df:
+        with open(os.path.join(os.path.dirname(__file__), 'data/auction-contract-complete.json'), 'r') as df:
             data = json.loads(df.read())
-        t = Tender(data)
-        t.store(self.db)
-        tender = self.db.get(t.id)
-        self.assertEqual(tender['awards'][0]['value'], data['awards'][0]['value'])
-        self.assertEqual(tender['awards'][0]['suppliers'], data['awards'][0]['suppliers'])
+        a = Auction(data)
+        a.store(self.db)
+        auction = self.db.get(a.id)
+        self.assertEqual(auction['awards'][0]['value'], data['awards'][0]['value'])
+        self.assertEqual(auction['awards'][0]['suppliers'], data['awards'][0]['suppliers'])
 
-        contract_data = deepcopy(tender['contracts'][0])
+        contract_data = deepcopy(auction['contracts'][0])
         del contract_data['value']
         del contract_data['suppliers']
-        contract_data['tender_id'] = tender['_id']
-        contract_data['tender_token'] = 'xxx'
-        contract_data['procuringEntity'] = tender['procuringEntity']
+        contract_data['auction_id'] = auction['_id']
+        contract_data['auction_token'] = 'xxx'
+        contract_data['procuringEntity'] = auction['procuringEntity']
         contract = Contract(contract_data)
         contract.dateModified = get_now()
         contract.store(self.db)
@@ -57,15 +59,13 @@ class MigrateTest(BaseWebTest):
         migrate_data(self.app.app.registry, 1)
         migrated_item = self.db.get(contract.id)
         self.assertIn("value", migrated_item)
-        tender['awards'][0]['value']['amount'] = \
-            str(tender['awards'][0]['value']['amount'])
-        self.assertEqual(migrated_item['value'], tender['awards'][0]['value'])
+        self.assertEqual(migrated_item['value'], auction['awards'][0]['value'])
         self.assertIn("suppliers", migrated_item)
-        self.assertEqual(migrated_item['suppliers'], tender['awards'][0]['suppliers'])
+        self.assertEqual(migrated_item['suppliers'], auction['awards'][0]['suppliers'])
 
     def test_migrate_from1to2(self):
         set_db_schema_version(self.db, 1)
-        u = Contract(test_contract_data)
+        u = Contract(contract_fixtures.test_contract_data)
         u.contractID = "UA-X"
         u.store(self.db)
         data = self.db.get(u.id)
@@ -73,7 +73,7 @@ class MigrateTest(BaseWebTest):
             {
                 "id": "ebcb5dd7f7384b0fbfbed2dc4252fa6e",
                 "title": "name.txt",
-                "url": "/tenders/{}/documents/ebcb5dd7f7384b0fbfbed2dc4252fa6e?download=10367238a2964ee18513f209d9b6d1d3".format(u.id),
+                "url": "/auctions/{}/documents/ebcb5dd7f7384b0fbfbed2dc4252fa6e?download=10367238a2964ee18513f209d9b6d1d3".format(u.id),
                 "datePublished": "2016-06-01T00:00:00+03:00",
                 "dateModified": "2016-06-01T00:00:00+03:00",
                 "format": "text/plain",
@@ -88,8 +88,12 @@ class MigrateTest(BaseWebTest):
         self.assertIn('KeyID=', migrated_item['documents'][0]['url'])
         self.assertIn('Signature=', migrated_item['documents'][0]['url'])
 
-    def test_migrate_data_return_none(self):
-        self.app.app.registry.settings['plugins'] = 'fake_plugin'
+    @patch('openprocurement.contracting.core.migration.get_plugins')
+    def test_migrate_data_return_none(self, mock_get_plugins):
+        mock_get_plugins.return_value = {
+            'fake_plugin':
+                {'plugins': 'fake_plugin2'}
+        }
         self.assertIsNone(migrate_data(self.app.app.registry))
 
 

@@ -32,7 +32,7 @@
  },
  "owner": "test",
  "title": "футляри до державних нагород",
- "tenderID": "UA-2016-06-01-000009",
+ "auctionID": "UA-2016-06-01-000009",
  "dateModified": "2016-06-01T13:28:28.351089+03:00",
  "numberOfBids": 2,
  "tenderPeriod": {
@@ -46,9 +46,9 @@
     {
      "description": "футляри до державних нагород",
      "classification": {
-      "scheme": "ДК021",
-      "description": "Cartons",
-      "id": "44617100-9"
+      "scheme": "CAV",
+      "description": "Boxes",
+      "id": "70122000-2"
      },
      "additionalClassifications": [
       {
@@ -70,7 +70,7 @@
      },
      "id": "668d0c872d5e457fa13615698bdc7efa",
      "unit": {
-      "code": "44617100-9",
+      "code": "70122000-2",
       "name": "item"
      },
      "quantity": 5
@@ -108,7 +108,7 @@
    "contractID": "UA-2016-06-01-000009-1"
   }
  ],
- "auctionPeriod": {
+ "tenderPeriod": {
   "startDate": "2016-05-21T13:28:10.372672+03:00",
   "endDate": "2016-05-22T13:28:10.372672+03:00"
  },
@@ -124,9 +124,9 @@
     {
      "description": "футляри до державних нагород",
      "classification": {
-      "scheme": "ДК021",
-      "description": "Cartons",
-      "id": "44617100-9"
+      "scheme": "CAV",
+      "description": "Boxes",
+      "id": "70122000-2"
      },
      "additionalClassifications": [
       {
@@ -148,7 +148,7 @@
      },
      "id": "95a791af529d402483e4a19ed7de1fee",
      "unit": {
-      "code": "44617100-9",
+      "code": "70122000-2",
       "name": "item"
      },
      "quantity": 5
@@ -194,9 +194,9 @@
   {
    "description": "футляри до державних нагород",
    "classification": {
-    "scheme": "ДК021",
-    "description": "Cartons",
-    "id": "44617100-9"
+    "scheme": "CAV",
+    "description": "Boxes",
+    "id": "70122000-2"
    },
    "additionalClassifications": [
     {
@@ -218,7 +218,7 @@
    },
    "id": "668d0c872d5e457fa13615698bdc7efa",
    "unit": {
-    "code": "44617100-9",
+    "code": "70122000-2",
     "name": "item"
    },
    "quantity": 5
@@ -230,7 +230,7 @@
    "id": "8ce7344584ad420baed6360424018204",
    "value": {
     "currency": "UAH",
-    "amount": 469.0,
+    "amount": 600.0,
     "valueAddedTaxIncluded": true
    },
    "tenderers": [
@@ -260,7 +260,7 @@
    "id": "5a5b3473d4f74321b9de5ad16c8d60cc",
    "value": {
     "currency": "UAH",
-    "amount": 479.0,
+    "amount": 600.0,
     "valueAddedTaxIncluded": true
    },
    "tenderers": [
@@ -291,5 +291,5 @@
   "amount": 500.0,
   "valueAddedTaxIncluded": true
  },
- "awardCriteria": "lowestCost"
+ "awardCriteria": "highestCost"
 }
