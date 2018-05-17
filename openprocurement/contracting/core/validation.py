@@ -23,22 +23,22 @@ def validate_contract_data(request, **kwargs):
         )
         request.errors.status = 403
         raise error_handler(request.errors)
-    return validate_data(request, model, data=data)
+    return validate_data(request, model, "contract", data=data)
 
 
 def validate_patch_contract_data(request, **kwargs):
     model = type(request.contract)
-    return validate_data(request, model, True)
+    return validate_data(request, model)
 
 
 def validate_change_data(request, **kwargs):
     update_logging_context(request, {'change_id': '__new__'})
     data = validate_json_data(request)
-    return validate_data(request, Change, data=data)
+    return validate_data(request, Change, "change", data=data)
 
 
 def validate_patch_change_data(request, **kwargs):
-    return validate_data(request, Change, True)
+    return validate_data(request, Change)
 
 
 # changes
