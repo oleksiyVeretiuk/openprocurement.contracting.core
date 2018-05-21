@@ -15,7 +15,6 @@ from openprocurement.api.models.auction_models import (
     IsoDateTimeType,
     ListType,
     Revision,
-    plain_role,
     schematics_default_role,
 )
 from openprocurement.api.constants import VERSION, SESSION
@@ -24,6 +23,9 @@ from openprocurement.contracting.core.tests.fixtures import (
 )
 from openprocurement.auctions.core.tests.base import (
     BaseWebTest as BaseBaseWebTest,
+)
+from openprocurement.auctions.core.models import (
+    plain_role,
 )
 
 
