@@ -12,25 +12,28 @@ from schematics.transforms import whitelist, blacklist
 from openprocurement.api.validation import validate_items_uniq
 from openprocurement.api.utils import get_now
 from openprocurement.api.models.auction_models import (
+    AdditionalClassification as BaseAdditionalClassification,
+    CPVClassification as BaseCPVClassification,
     Contract as BaseContract,
     Document as BaseDocument,
-    Organization as BaseOrganization,
-    CPVClassification as BaseCPVClassification,
+    IsoDateTimeType,
     Item as BaseItem,
-    AdditionalClassification as BaseAdditionalClassification,
-    Model,
     ListType,
+    Model,
+    Organization as BaseOrganization,
     Revision,
     Value,
-    IsoDateTimeType,
-    plain_role,
     schematics_default_role,
     schematics_embedded_role,
 )
 from openprocurement.api.models.common import (
     ContactPoint as BaseContactPoint,
 )
-from openprocurement.auctions.core.models import Administrator_role, flashItem
+from openprocurement.auctions.core.models import (
+    Administrator_role,
+    flashItem,
+    plain_role,
+)
 
 contract_create_role = (whitelist(
     'id', 'awardID', 'contractID', 'contractNumber', 'title', 'title_en',
