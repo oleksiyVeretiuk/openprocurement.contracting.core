@@ -18,7 +18,7 @@ from openprocurement.contracting.core.tests.base import (
     BaseWebTest
 )
 from openprocurement.contracting.core.tests.fixtures import contract_fixtures
-from openprocurement.auctions.flash.models import Auction
+from openprocurement.auctions.flash.models import FlashAuction as Auction
 
 
 class MigrateTest(BaseWebTest):
