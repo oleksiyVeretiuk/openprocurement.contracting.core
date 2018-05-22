@@ -13,7 +13,7 @@ def validate_contract_data(request, **kwargs):
     data = request.validated['json_data'] = validate_json_data(request)
     model = request.contract_from_data(data, create=False)
     if (
-        hasattr(request, 'check_accreditation') 
+        hasattr(request, 'check_accreditation')
         and not request.check_accreditation(model.create_accreditation)
     ):
         request.errors.add(
@@ -28,7 +28,7 @@ def validate_contract_data(request, **kwargs):
 
 def validate_patch_contract_data(request, **kwargs):
     model = type(request.contract)
-    return validate_data(request, model)
+    return validate_data(request, model, 'contract')
 
 
 def validate_change_data(request, **kwargs):
@@ -113,13 +113,19 @@ def validate_contract_document_operation_not_in_allowed_contract_status(request,
             request,
             error_handler,
             'Can\'t {} document in current ({}) contract status'.
-                              format(OPERATIONS.get(request.method), request.validated['contract'].status))
+            format(OPERATIONS.get(request.method), request.validated['contract'].status))
 
 
 def validate_add_document_to_active_change(request, **kwargs):
     data = request.validated['data']
     if "relatedItem" in data and data.get('documentOf') == 'change':
-        if not [1 for c in request.validated['contract'].changes if c.id == data['relatedItem'] and c.status == 'pending']:
+        if (
+            not [
+                1 for c in request.validated['contract'].changes
+                if c.id == data['relatedItem']
+                and c.status == 'pending'
+            ]
+        ):
             raise_operation_error(
                 request,
                 error_handler,

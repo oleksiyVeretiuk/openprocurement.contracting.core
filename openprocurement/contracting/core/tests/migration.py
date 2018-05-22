@@ -4,7 +4,7 @@ import os
 import unittest
 
 from copy import deepcopy
-from mock import MagicMock, patch
+from mock import patch
 
 from openprocurement.api.utils import get_now
 from openprocurement.contracting.core.models import Contract
@@ -18,7 +18,7 @@ from openprocurement.contracting.core.tests.base import (
     BaseWebTest
 )
 from openprocurement.contracting.core.tests.fixtures import contract_fixtures
-from openprocurement.auctions.flash.models import FlashAuction as Auction
+from openprocurement.auctions.flash.models import FlashAuction
 
 
 class MigrateTest(BaseWebTest):
@@ -37,7 +37,7 @@ class MigrateTest(BaseWebTest):
 
         with open(os.path.join(os.path.dirname(__file__), 'data/auction-contract-complete.json'), 'r') as df:
             data = json.loads(df.read())
-        a = Auction(data)
+        a = FlashAuction(data)
         a.store(self.db)
         auction = self.db.get(a.id)
         self.assertEqual(auction['awards'][0]['value'], data['awards'][0]['value'])
@@ -80,6 +80,7 @@ class MigrateTest(BaseWebTest):
             }
         ]
         _id, _rev = self.db.save(data)
+        self.setUpDS()
         self.app.app.registry.docservice_url = 'http://localhost'
         migrate_data(self.app.app.registry, 2)
         migrated_item = self.db.get(u.id)

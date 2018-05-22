@@ -8,18 +8,19 @@ from schematics.types import StringType
 
 from openprocurement.contracting.core.tests.base import error_handler
 from openprocurement.contracting.core.utils import (
-    extract_contract_adapter,
-    extract_contract,
     contract_from_data,
     contract_serialize,
-    save_contract
+    extract_contract,
+    extract_contract_adapter,
+    save_contract,
 )
 from openprocurement.contracting.core.models import Contract as BaseContract
 from openprocurement.contracting.core.utils import (
     apply_patch,
+    get_milestone_by_type,
     isContract,
     register_contract_contractType,
-    set_ownership
+    set_ownership,
 )
 
 
@@ -42,7 +43,6 @@ class TestisContract(unittest.TestCase):
                          'contractType = %s' % (self.test_value,))
 
     def test_call(self):
-        contract = Contract()
         request = Request(dict())
 
         request.contract = None
@@ -89,6 +89,22 @@ class TestUtilsFucntions(unittest.TestCase):
         item = MagicMock()
         set_ownership(item, None)
         self.assertIsNotNone(item.owner_token)
+
+    def test_get_milestone_by_type(self):
+        mocked_financing_milestone = MagicMock()
+        mocked_financing_milestone.name = 'financing'
+        mocked_financing_milestone.type_ = 'financing'
+
+        mocked_approval_milestone = MagicMock()
+        mocked_approval_milestone.name = 'approval'
+        mocked_approval_milestone.type_ = 'approval'
+
+        test_milestones = [
+            mocked_financing_milestone,
+            mocked_approval_milestone,
+        ]
+        result = get_milestone_by_type(test_milestones, 'financing')
+        self.assertEqual(result.name, 'financing')
 
 
 class TestApiFucntions(unittest.TestCase):
@@ -178,8 +194,9 @@ class TestApiFucntions(unittest.TestCase):
     def test_contract_from_data_success(self):
         test_mock = MagicMock()
         test_mock.return_value = test_mock
-        self.request.registry.configure_mock(**{'contract_contractTypes':
-                                                    {'common': test_mock}})
+        self.request.registry.configure_mock(
+            **{'contract_contractTypes': {'common': test_mock}}
+        )
 
         self.assertEqual(contract_from_data(self.request, dict()), test_mock)
         test_mock.assert_called_once_with(dict())
