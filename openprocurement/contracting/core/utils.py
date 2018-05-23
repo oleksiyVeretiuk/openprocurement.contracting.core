@@ -165,3 +165,9 @@ def apply_patch(request, data=None, save=True, src=None):
 
 def set_ownership(item, request):
     item.owner_token = generate_id()
+
+
+def get_milestone_by_type(milestones, type_):
+    for milestone in milestones:
+        if milestone.type_ == type_:
+            return milestone
