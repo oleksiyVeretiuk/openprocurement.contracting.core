@@ -36,31 +36,89 @@ from openprocurement.auctions.core.models import (
 )
 
 contract_create_role = (whitelist(
-    'id', 'awardID', 'contractID', 'contractNumber', 'title', 'title_en',
-    'title_ru', 'description', 'description_en', 'description_ru', 'status',
-    'period', 'value', 'dateSigned', 'items', 'suppliers',
-    'procuringEntity', 'owner', 'auction_token', 'auction_id', 'mode'
+    'auction_id',
+    'auction_token',
+    'awardID',
+    'contractID',
+    'contractNumber',
+    'dateSigned',
+    'description',
+    'description_en',
+    'description_ru',
+    'id',
+    'items',
+    'mode',
+    'owner',
+    'period',
+    'procuringEntity',
+    'sandbox_parameters',
+    'status',
+    'suppliers',
+    'title',
+    'title_en',
+    'title_ru',
+    'value',
 ))
 
 contract_edit_role = (whitelist(
-    'title', 'title_en', 'title_ru', 'description', 'description_en',
-    'description_ru', 'status', 'period', 'value', 'items', 'amountPaid',
-    'terminationDetails', 'contract_amountPaid',
+    'amountPaid',
+    'contract_amountPaid',
+    'description',
+    'description_en',
+    'description_ru',
+    'items',
+    'period',
+    'status',
+    'terminationDetails',
+    'title',
+    'title_en',
+    'title_ru',
+    'value',
 ))
 
 contract_view_role = (whitelist(
-    'id', 'awardID', 'contractID', 'dateModified', 'contractNumber', 'title',
-    'title_en', 'title_ru', 'description', 'description_en', 'description_ru',
-    'status', 'period', 'value', 'dateSigned', 'documents', 'items',
-    'suppliers', 'procuringEntity', 'owner', 'mode', 'auction_id', 'changes',
-    'amountPaid', 'terminationDetails', 'contract_amountPaid',
+    'amountPaid',
+    'auction_id',
+    'awardID',
+    'changes',
+    'contractID',
+    'contractNumber',
+    'contract_amountPaid',
+    'dateModified',
+    'dateSigned',
+    'description',
+    'description_en',
+    'description_ru',
+    'documents',
+    'id',
+    'items',
+    'mode',
+    'owner',
+    'period',
+    'procuringEntity',
+    'sandbox_parameters',
+    'status',
+    'suppliers',
+    'terminationDetails',
+    'title',
+    'title_en',
+    'title_ru',
+    'value',
 ))
 
 contract_administrator_role = (Administrator_role + whitelist('suppliers',))
 
 item_edit_role = whitelist(
-    'description', 'description_en', 'description_ru', 'unit', 'deliveryDate',
-    'deliveryAddress', 'deliveryLocation', 'quantity', 'id')
+    'deliveryAddress',
+    'deliveryDate',
+    'deliveryLocation',
+    'description',
+    'description_en',
+    'description_ru',
+    'id',
+    'quantity',
+    'unit',
+)
 
 
 class IContract(Interface):
