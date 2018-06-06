@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from mock import MagicMock, patch
+from mock import MagicMock, Mock, patch
 from pyramid.exceptions import URLDecodeError
 from pyramid.request import Request
 from schematics.types import StringType
