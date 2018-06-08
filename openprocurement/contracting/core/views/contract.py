@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from openprocurement.api.utils import (
-    json_view,
-    context_unpack,
     APIResourceListing,
+    context_unpack,
+    json_view,
+    set_ownership,
 )
 from openprocurement.contracting.core.utils import (
     contractingresource,
@@ -64,7 +65,7 @@ class ContractsResource(APIResourceListing):
             doc.__parent__ = contract
             contract.documents.append(doc)
 
-        # set_ownership(contract, self.request) TODO
+        acc = set_ownership(contract, self.request)
         self.request.validated['contract'] = contract
         self.request.validated['contract_src'] = {}
         if save_contract(self.request):
@@ -74,7 +75,5 @@ class ContractsResource(APIResourceListing):
             self.request.response.status = 201
             return {
                 'data': contract.serialize("view"),
-                'access': {
-                    'token': contract.owner_token
-                }
+                'access': acc,
             }

@@ -17,12 +17,12 @@ def validate_contract_data(request, **kwargs):
         and not request.check_accreditation(model.create_accreditation)
     ):
         request.errors.add(
-            'contract',
+            'body',
             'accreditation',
             'Broker Accreditation level does not permit contract creation'
         )
         request.errors.status = 403
-        raise error_handler(request.errors)
+        raise error_handler(request)
     return validate_data(request, model, "contract", data=data)
 
 

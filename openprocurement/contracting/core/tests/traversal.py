@@ -33,7 +33,9 @@ class TraversalTest(BaseWebTest):
         (Allow, Everyone, 'view_listing'),
         (Allow, Everyone, 'view_contract'),
         (Allow, 'g:contracting', 'create_contract'),
+        (Allow, 'g:brokers', 'create_contract'),
         (Allow, 'g:Administrator', 'edit_contract'),
+        (Allow, 'g:brokers', 'edit_contract'),
         (Allow, 'g:admins', ALL_PERMISSIONS)
     ]
 
