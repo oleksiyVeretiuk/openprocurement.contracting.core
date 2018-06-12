@@ -89,14 +89,6 @@ def save_contract(request):
     """
     contract = request.validated['contract']
 
-
-def save_contract(request):
-    """ Save contract object to database
-    :param request:
-    :return: True if Ok
-    """
-    contract = request.validated['contract']
-
     if contract.mode == u'test':
         set_modetest_titles(contract)
     patch = get_revision_changes(contract.serialize("plain"),
@@ -137,20 +129,20 @@ class isContract(object):
 
     def __call__(self, context, request):
         if request.contract is not None:
-            c_type = getattr(request.contract, 'contractType',
-                             None) or "common"
+            c_type = getattr(
+                request.contract, '_internal_type', None
+            ) or "common"
             return c_type == self.val
         return False
 
 
-def register_contract_contractType(config, model):
+def register_contract_contractType(config, model, contract_type):
     """Register a contract contractType.
     :param config:
         The pyramid configuration object that will be populated.
     :param model:
         The contract model class
     """
-    contract_type = model.contractType.default or 'common'
     config.registry.contract_contractTypes[contract_type] = model
 
 

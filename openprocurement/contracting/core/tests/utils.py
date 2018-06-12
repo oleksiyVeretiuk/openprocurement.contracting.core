@@ -64,7 +64,7 @@ class TestUtilsFucntions(unittest.TestCase):
         config.registry.contract_contractTypes = {}
 
         self.assertEqual(config.registry.contract_contractTypes, {})
-        register_contract_contractType(config, Contract)
+        register_contract_contractType(config, Contract, 'common')
         common = config.registry.contract_contractTypes.get(
             'common'
         )
