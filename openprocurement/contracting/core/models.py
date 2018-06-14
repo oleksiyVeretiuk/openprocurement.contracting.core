@@ -8,6 +8,8 @@ from schematics.types.compound import ModelType, DictType
 from schematics.types.serializable import serializable
 from schematics.exceptions import ValidationError
 from schematics.transforms import whitelist, blacklist
+
+from openprocurement.api.constants import SANDBOX_MODE
 from openprocurement.api.utils import get_now
 from openprocurement.api.models import Contract as BaseContract
 from openprocurement.api.models import Document as BaseDocument
@@ -183,6 +185,8 @@ class Contract(SchematicsDocument, BaseContract):
     terminationDetails = StringType()
 
     create_accreditation = 3  # TODO
+    if SANDBOX_MODE:
+        procurementMethodDetails = StringType()
 
     class Options:
         roles = {
