@@ -35,7 +35,7 @@ class ContractPostViewTest(BaseWebTest):
 
     def test_post_view(self):
         self.app.authorization = ('Basic', ('contracting', ''))
-        response = self.app.post_json('/contracts', {'data': self.test_data})
+        response = self.app.post_json('contracts', {'data': self.test_data})
 
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')

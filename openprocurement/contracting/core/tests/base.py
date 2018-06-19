@@ -9,6 +9,7 @@ from schematics.types import StringType
 from schematics.types.compound import ModelType
 from uuid import uuid4
 
+from openprocurement.api.utils import connection_mock_config
 from openprocurement.api.models.auction_models import (
     Contract as BaseContract,
     Document as BaseDocument,
@@ -21,9 +22,12 @@ from openprocurement.api.constants import VERSION, SESSION
 from openprocurement.contracting.core.tests.fixtures import (
     contract_fixtures,
 )
-from openprocurement.auctions.core.tests.base import (
-    BaseWebTest as BaseBaseWebTest,
+from openprocurement.api.tests.base import (
+    BaseResourceWebTest,
+    MOCK_CONFIG as BASE_MOCK_CONFIG
 )
+
+from openprocurement.contracting.core.tests.fixtures.config import PARTIAL_MOCK_CONFIG
 from openprocurement.auctions.core.models import (
     plain_role,
 )
@@ -41,15 +45,22 @@ class PrefixedRequestClass(webtest.app.TestRequest):
         return webtest.app.TestRequest.blank(path, *args, **kwargs)
 
 
-class BaseWebTest(BaseBaseWebTest):
+
+
+
+MOCK_CONFIG = connection_mock_config(PARTIAL_MOCK_CONFIG, ('plugins',), BASE_MOCK_CONFIG)
+
+class BaseWebTest(BaseResourceWebTest):
     """
     Setups the database before each test and delete it after.
     """
     relative_to = os.path.dirname(__file__)
+    mock_config = MOCK_CONFIG
 
 
 class BaseContractWebTest(BaseWebTest):
     initial_data = contract_fixtures.test_contract_data
+    mock_config = MOCK_CONFIG
 
     def setUp(self):
         super(BaseContractWebTest, self).setUp()
