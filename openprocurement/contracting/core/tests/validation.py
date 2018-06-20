@@ -13,12 +13,14 @@ from openprocurement.contracting.core.validation import (
     validate_change_data,
     validate_contract_change_add_not_in_allowed_contract_status,
     validate_contract_change_update_not_in_allowed_change_status,
+    validate_contract_document,
     validate_contract_document_operation_not_in_allowed_contract_status,
     validate_contract_update_not_in_allowed_status,
     validate_create_contract_change,
     validate_credentials_generate,
     validate_patch_change_data,
     validate_patch_contract_data,
+    validate_patch_contract_document,
     validate_terminate_contract_without_amountPaid,
     validate_update_contract_change_status,
 )
@@ -247,6 +249,26 @@ class TestValidationFucntions(unittest.TestCase):
             mocked_error_handler,
             'Can\'t add document to \'active\' change'
         )
+
+    @patch('openprocurement.contracting.core.validation.validate_json_data')
+    @patch('openprocurement.contracting.core.validation.update_logging_context')
+    @patch('openprocurement.contracting.core.validation.validate_data')
+    def test_validate_contract_document(
+            self,
+            validate_data,
+            update_logging_context,
+            validate_json_data,
+        ):
+        update_logging_context.return_value = None
+        validate_json_data.return_value = None
+        request = MagicMock()
+        validate_data.return_value = True
+        validate_contract_document(request)
+
+    @patch('openprocurement.contracting.core.validation.validate_data')
+    def test_validate_patch_contract_document(self, validate_data):
+        validate_data.return_value = True
+        validate_patch_contract_document(MagicMock())
 
 
 class TestValidateContractData(unittest.TestCase):

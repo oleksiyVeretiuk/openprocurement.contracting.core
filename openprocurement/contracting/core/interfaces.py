@@ -10,10 +10,20 @@ class IContractManager(Interface):
     def change_contract(self, request, **kwargs):
         raise NotImplementedError
 
+
 class IMilestoneManager(Interface):
 
     def create_milestones(self, request, **kwargs):
         raise NotImplementedError
 
     def change_milestone(self, request, **kwargs):
+        raise NotImplementedError
+
+
+class IDocumentManager(Interface):
+
+    def create_document(self, request, **kwargs):
+        raise NotImplementedError
+
+    def change_document(self, request, **kwargs):
         raise NotImplementedError
