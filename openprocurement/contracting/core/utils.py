@@ -23,6 +23,8 @@ from openprocurement.contracting.core.traversal import factory
 PKG = get_distribution(__package__)
 LOGGER = getLogger(PKG.project_name)
 
+DEFAULT_CONTRACT_TYPE = "common"
+
 contractingresource = partial(
     resource,
     error_handler=error_handler,
@@ -65,8 +67,13 @@ def extract_contract(request):
 
 
 def contract_from_data(request, data, raise_error=True, create=True):
-    contractType = data.get('contractType', 'common')
+    contractType = data.get('contractType')
+    if not contractType:
+        contract_types = get_contract_types(request.registry, (DEFAULT_CONTRACT_TYPE,))
+        contractType = contract_types[0] if contract_types else DEFAULT_CONTRACT_TYPE
+
     model = request.registry.contract_contractTypes.get(contractType)
+
     if model is None and raise_error:
         request.errors.add('body', 'data', 'contractType Not implemented')
         request.errors.status = 415
@@ -129,10 +136,8 @@ class isContract(object):
 
     def __call__(self, context, request):
         if request.contract is not None:
-            c_type = getattr(
-                request.contract, '_internal_type', None
-            ) or "common"
-            return c_type == self.val
+            contract_type = getattr(request.contract, 'contractType', "common")
+            return request.registry.contract_type_configurator.get(contract_type) == self.val
         return False
 
 
@@ -144,6 +149,14 @@ def register_contract_contractType(config, model, contract_type):
         The contract model class
     """
     config.registry.contract_contractTypes[contract_type] = model
+    config.registry.contract_type_configurator[contract_type] = model._internal_type
+
+
+def get_contract_types(registry, internal_types):
+    contract_types = [
+        ct for ct, it in registry.contract_type_configurator.items() if it in internal_types
+    ]
+    return contract_types
 
 
 def apply_patch(request, data=None, save=True, src=None):
@@ -163,3 +176,9 @@ def get_milestone_by_type(milestones, type_):
     for milestone in milestones:
         if milestone.type_ == type_:
             return milestone
+
+
+def get_contract_route_name(request, contract):
+    contract_type_configurator = request.registry.contract_type_configurator
+    contract_type = contract_type_configurator[contract.contractType]
+    return '{}:Contract'.format(contract_type)

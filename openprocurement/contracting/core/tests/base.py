@@ -24,8 +24,10 @@ from openprocurement.contracting.core.tests.fixtures import (
 )
 from openprocurement.api.tests.base import (
     BaseResourceWebTest,
+    snitch,
     MOCK_CONFIG as BASE_MOCK_CONFIG
 )
+
 
 from openprocurement.contracting.core.tests.fixtures.config import PARTIAL_MOCK_CONFIG
 from openprocurement.auctions.core.models import (
@@ -69,13 +71,40 @@ class BaseContractWebTest(BaseWebTest):
     def create_contract(self):
         data = deepcopy(self.initial_data)
 
-        orig_auth = self.app.authorization
-        self.app.authorization = ('Basic', ('contracting', ''))
+        # orig_auth = self.app.authorization
+        # self.app.authorization = ('Basic', ('contracting', ''))
         response = self.app.post_json('/contracts', {'data': data})
         self.contract = response.json['data']
-        # self.contract_token = response.json['access']['token']
+        self.contract_token = response.json['access']['token']
+        self.contract_transfer = response.json['access']['transfer']
         self.contract_id = self.contract['id']
-        self.app.authorization = orig_auth
+        # self.app.authorization = orig_auth
+        return response.json
+
+    def use_transfer(self, transfer, contract_id, origin_transfer):
+        req_data = {"data": {"id": transfer['data']['id'],
+                             'transfer': origin_transfer}}
+
+        self.app.post_json('/contracts/{}/ownership'.format(contract_id), req_data)
+        response = self.app.get('/transfers/{}'.format(transfer['data']['id']))
+        return response.json
+
+    def create_transfer(self):
+        response = self.app.post_json('transfers', {"data": {}})
+        return response.json
+
+    def get_contract(self, contract_id):
+        response = self.app.get('/contracts/{}'.format(contract_id))
+        return response.json
+
+    def set_contract_mode(self, contract_id, mode):
+        current_auth = self.app.authorization
+
+        self.app.authorization = ('Basic', ('administrator', ''))
+        response = self.app.patch_json('/contracts/{}'.format(contract_id),
+                                       {'data': {'mode': mode}})
+        self.app.authorization = current_auth
+        return response
 
     def tearDown(self):
         del self.db[self.contract_id]

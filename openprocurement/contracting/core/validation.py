@@ -4,26 +4,29 @@ from openprocurement.api.utils import (
     raise_operation_error,
     update_logging_context,
 )
-from openprocurement.api.validation import validate_json_data, validate_data, OPERATIONS
 from openprocurement.contracting.core.models import Change, Document
+
+from openprocurement.api.validation import (
+    validate_accreditations,
+    validate_data,
+    validate_json_data,
+    OPERATIONS,
+    validate_t_accreditation,
+)
 
 
 def validate_contract_data(request, **kwargs):
     update_logging_context(request, {'contract_id': '__new__'})
-    data = request.validated['json_data'] = validate_json_data(request)
+
+    data = validate_json_data(request)
+    if data is None:
+        return
+
     model = request.contract_from_data(data, create=False)
-    if (
-        hasattr(request, 'check_accreditation')
-        and not request.check_accreditation(model.create_accreditation)
-    ):
-        request.errors.add(
-            'body',
-            'accreditation',
-            'Broker Accreditation level does not permit contract creation'
-        )
-        request.errors.status = 403
-        raise error_handler(request)
-    return validate_data(request, model, "contract", data=data)
+    validate_accreditations(request, model, 'contract')
+    data = validate_data(request, model, "contract", data=data)
+    validate_t_accreditation(request, data, 'contract')
+    return data
 
 
 def validate_patch_contract_data(request, **kwargs):

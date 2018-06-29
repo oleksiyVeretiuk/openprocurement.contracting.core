@@ -26,6 +26,7 @@ from openprocurement.contracting.core.utils import (
 
 class Contract(BaseContract):
     contractType = StringType(choices=['esco', 'common'], default='common')
+    _internal_type = 'TEST_TYPE'
 
 
 class TestisContract(unittest.TestCase):
@@ -46,6 +47,8 @@ class TestisContract(unittest.TestCase):
         request = Request(dict())
 
         request.contract = None
+        request.registry = MagicMock()
+        request.registry.contract_type_configurator = {'common': 'common'}
         self.assertEqual(self.isContract(None, request), False)
 
         request.contract = Contract()

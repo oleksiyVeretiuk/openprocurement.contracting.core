@@ -18,8 +18,6 @@ class Root(object):
         (Allow, 'g:brokers', 'create_contract'),
         (Allow, 'g:convoy', 'create_contract'),
         (Allow, 'g:Administrator', 'edit_contract'),
-        (Allow, 'g:brokers', 'edit_contract'),
-        (Allow, 'g:admins', ALL_PERMISSIONS),
     ]
 
     def __init__(self, request):

@@ -31,6 +31,7 @@ def includeme(config, plugin_map):
     config.add_request_method(contract_from_data)
     config.scan("openprocurement.contracting.core.views")
     config.registry.contract_contractTypes = {}
+    config.registry.contract_type_configurator = {}
     config.add_route_predicate('internal_type', isContract)
     config.add_directive('add_contract_contractType',
                          register_contract_contractType)

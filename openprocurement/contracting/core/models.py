@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from uuid import uuid4
 from zope.interface import implementer, Interface
-from couchdb_schematics.document import SchematicsDocument
 from pyramid.security import Allow
 from schematics.types import StringType, BaseType, MD5Type
 from schematics.types.compound import ModelType, DictType
@@ -27,6 +26,7 @@ from openprocurement.api.models.auction_models import (
     schematics_embedded_role,
 )
 from openprocurement.api.models.common import (
+    BaseResourceItem,
     ContactPoint as BaseContactPoint,
 )
 from openprocurement.auctions.core.models import (
@@ -227,18 +227,16 @@ class Change(Model):
 
 
 @implementer(IContract)
-class Contract(SchematicsDocument, BaseContract):
+class Contract(BaseResourceItem, BaseContract):
     """ Contract """
 
     revisions = ListType(ModelType(Revision), default=list())
     dateModified = IsoDateTimeType()
-    _attachments = DictType(DictType(BaseType), default=dict())  # couchdb attachments
     items = ListType(ModelType(flashItem), required=False, min_size=1, validators=[validate_items_uniq])
     auction_token = StringType(required=True)
     auction_id = StringType(required=True)
     owner_token = StringType(default=lambda: uuid4().hex)
     owner = StringType()
-    mode = StringType(choices=['test'])
     status = StringType(choices=['terminated', 'active'], default='active')
     suppliers = ListType(ModelType(Organization), min_size=1, max_size=1)
     '''
@@ -303,11 +301,6 @@ class Contract(SchematicsDocument, BaseContract):
         else:
             role = 'edit_{}'.format(request.context.status)
         return role
-
-    @serializable(serialized_name='id')
-    def doc_id(self):
-        """A property that is serialized by schematics exports."""
-        return self._id
 
     @serializable(serialized_name='amountPaid', serialize_when_none=False, type=ModelType(Value))
     def contract_amountPaid(self):

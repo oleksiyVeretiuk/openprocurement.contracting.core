@@ -8,6 +8,7 @@ requires = [
 
 test_requires = requires + [
     'webtest',
+    'munch',
     'python-coveralls',
     'openprocurement.tender.belowthreshold',
 ]
@@ -27,6 +28,9 @@ entry_points = {
     ],
     'openprocurement.api.migrations': [
         'contracting = openprocurement.contracting.core.migration:migrate_data'
+    ],
+    'transferring': [
+        'contracting.transferring = openprocurement.contracting.core.plugins.transferring.includeme:includeme'
     ]
 }
 

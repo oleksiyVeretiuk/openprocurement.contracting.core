@@ -276,11 +276,15 @@ class TestValidateContractData(unittest.TestCase):
        so all functions that are called inside tested functions are patched."""
 
     def setUp(self):
-        self.expected_result = True
+        self.expected_result = {}
         self.request = Request(dict())
         self.request.validated = dict()
+        self.request.check_accreditation = MagicMock()
+        self.request.check_accreditation.return_value = True
         self.model = MagicMock()
-        self.request.contract_from_data = self.model
+        self.model.check_accreditation.return_value = True
+        self.request.contract_from_data = MagicMock()
+        self.request.contract_from_data.return_value = self.model
         self.request.errors = MagicMock()
 
     @patch('openprocurement.contracting.core.validation.validate_data')

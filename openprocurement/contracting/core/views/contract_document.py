@@ -30,7 +30,7 @@ class CeasefireContractDocumentResource(APIResource):
     @json_view(
         content_type="application/json",
         validators=(validate_contract_document,),
-        permission='create_contract')
+        permission='edit_contract')
     def collection_post(self):
         contract = self.request.validated['contract']
         document = self.request.validated['document']
