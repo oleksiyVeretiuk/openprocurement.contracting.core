@@ -13,7 +13,7 @@ from openprocurement.contracting.core.tests import (
 )
 
 
-FAKE_PLUGIN_CONFIG = {'plugins': 'fake_plugin'}
+FAKE_PLUGIN_CONFIG = {'plugins': {'fake_plugin': {'aliases': []}}}
 
 class TestIncludeme(unittest.TestCase):
     """Test if plugin load works correct"""

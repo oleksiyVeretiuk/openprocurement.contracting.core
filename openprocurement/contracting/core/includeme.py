@@ -9,6 +9,7 @@ from openprocurement.contracting.core.utils import (
 )
 from openprocurement.api.app import get_evenly_plugins
 from openprocurement.api.interfaces import IContentConfigurator
+from openprocurement.api.utils import get_plugin_aliases
 from openprocurement.contracting.core.adapters import ContractConfigurator
 from openprocurement.contracting.core.design import add_design
 from openprocurement.contracting.core.models import IContract
@@ -38,6 +39,10 @@ def includeme(config, plugin_map):
     config.scan("openprocurement.contracting.core.views")
     config.registry.registerAdapter(ContractConfigurator, (IContract, IRequest),
                                     IContentConfigurator)
+    # Aliases information
+    LOGGER.info('Start aliases')
+    get_plugin_aliases(plugin_map.get('plugins', {}))
+    LOGGER.info('End aliases')
 
     # search for plugins
     get_evenly_plugins(config, plugin_map['plugins'], 'openprocurement.contracting.core.plugins')
