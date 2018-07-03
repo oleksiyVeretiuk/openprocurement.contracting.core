@@ -123,7 +123,8 @@ class TestContract(unittest.TestCase):
     def test_local_roles(self):
         self.assertEqual(self.contract.__local_roles__(), dict(
             [('{}_{}'.format(self.owner, self.owner_token), 'contract_owner'),
-             ('{}_{}'.format(self.owner, self.auction_token), 'auction_owner')]))
+             # ('{}_{}'.format(self.owner, self.auction_token), 'auction_owner')
+             ]))
 
     def test_acl(self):
 
@@ -133,8 +134,8 @@ class TestContract(unittest.TestCase):
                   'edit_contract'),
                  (Allow, '{}_{}'.format(self.owner, self.owner_token),
                   'upload_contract_documents'),
-                 (Allow, '{}_{}'.format(self.owner, self.auction_token),
-                  'generate_credentials')
+                 # (Allow, '{}_{}'.format(self.owner, self.auction_token),
+                 #  'generate_credentials')
              ]
          )
 

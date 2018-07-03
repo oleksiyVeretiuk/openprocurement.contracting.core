@@ -36,8 +36,10 @@ from openprocurement.auctions.core.models import (
 )
 
 contract_create_role = (whitelist(
-    'auction_id',
-    'auction_token',
+    # 'auction_id', # TODO: Move to common contract
+    #'auction_token', # TODO: Move to common contract
+    'relatedProcessID',
+    'transfer_token',
     'awardID',
     'contractID',
     'contractNumber',
@@ -78,7 +80,8 @@ contract_edit_role = (whitelist(
 
 contract_view_role = (whitelist(
     'amountPaid',
-    'auction_id',
+    # 'auction_id', # TODO: Move to common contract
+    'relatedProcessID',
     'awardID',
     'changes',
     'contractID',
@@ -233,8 +236,9 @@ class Contract(BaseResourceItem, BaseContract):
     revisions = ListType(ModelType(Revision), default=list())
     dateModified = IsoDateTimeType()
     items = ListType(ModelType(flashItem), required=False, min_size=1, validators=[validate_items_uniq])
-    auction_token = StringType(required=True)
-    auction_id = StringType(required=True)
+    relatedProcessID = StringType()
+    #auction_token = StringType(required=True) # TODO: Move to common contract
+    #auction_id = StringType(required=True) # TODO: Move to common contract
     owner_token = StringType(default=lambda: uuid4().hex)
     owner = StringType()
     status = StringType(choices=['terminated', 'active'], default='active')
@@ -263,14 +267,15 @@ class Contract(BaseResourceItem, BaseContract):
         }
 
     def __local_roles__(self):
-        return dict([('{}_{}'.format(self.owner, self.owner_token), 'contract_owner'),
-                     ('{}_{}'.format(self.owner, self.auction_token), 'auction_owner')])
+        #('{}_{}'.format(self.owner, self.auction_token), 'auction_owner') # TODO: Move to common contract
+        return dict([('{}_{}'.format(self.owner, self.owner_token), 'contract_owner')])
 
     def __acl__(self):
+
+        #(Allow, '{}_{}'.format(self.owner, self.auction_token), 'generate_credentials') # TODO: Move to common contract
         acl = [
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'edit_contract'),
-            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_contract_documents'),
-            (Allow, '{}_{}'.format(self.owner, self.auction_token), 'generate_credentials')
+            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_contract_documents')
         ]
         return acl
 

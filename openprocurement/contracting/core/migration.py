@@ -50,11 +50,12 @@ def from0to1(registry):
         doc = i.doc
 
         if "suppliers" not in doc:
-            auction_id = doc['auction_id']
-            rel_award = doc['awardID']
-            auction_doc = registry.db.get(auction_id)
-
-            rel_award = [aw for aw in auction_doc['awards'] if aw['id'] == doc['awardID']]
+            # auction_id = doc['auction_id']
+            # rel_award = doc['awardID']
+            # auction_doc = registry.db.get(auction_id)
+            #
+            # rel_award = [aw for aw in auction_doc['awards'] if aw['id'] == doc['awardID']]
+            rel_award = []
             if not rel_award:
                 LOGGER.warn("Related award {} for contract {} not found!".
                             format(doc['awardID'], doc['id']), extra={'MESSAGE_ID': 'migrate_data'})
