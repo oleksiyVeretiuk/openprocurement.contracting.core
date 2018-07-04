@@ -83,6 +83,7 @@ contract_view_role = (whitelist(
     'amountPaid',
     # 'auction_id', # TODO: Move to common contract
     'relatedProcessID',
+    'merchandisingObject',
     'awardID',
     'changes',
     'contractID',
