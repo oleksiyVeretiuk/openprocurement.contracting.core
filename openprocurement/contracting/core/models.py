@@ -39,6 +39,7 @@ contract_create_role = (whitelist(
     # 'auction_id', # TODO: Move to common contract
     #'auction_token', # TODO: Move to common contract
     'relatedProcessID',
+    'merchandisingObject',
     'transfer_token',
     'awardID',
     'contractID',
