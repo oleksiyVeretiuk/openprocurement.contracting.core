@@ -138,11 +138,14 @@ def get_contract(model):
 
 class Document(BaseDocument):
     """ Contract Document """
-    documentOf = StringType(required=True, choices=[
-        'tender', 'item', 'lot', 'contract', 'change'], default='contract')
+    documentOf = StringType(
+        required=True,
+        choices=['tender', 'item', 'lot', 'contract', 'change', 'milestone'],
+        default='contract'
+    )
 
     def validate_relatedItem(self, data, relatedItem):
-        if not relatedItem and data.get('documentOf') in ['item', 'change']:
+        if not relatedItem and data.get('documentOf') in ['item', 'change', 'milestone']:
             raise ValidationError(u'This field is required.')
         if relatedItem and isinstance(data['__parent__'], Model):
             contract = get_contract(data['__parent__'])
@@ -150,6 +153,8 @@ class Document(BaseDocument):
                 raise ValidationError(u"relatedItem should be one of changes")
             if data.get('documentOf') == 'item' and relatedItem not in [i.id for i in contract.items]:
                 raise ValidationError(u"relatedItem should be one of items")
+            if data.get('documentOf') == 'milestone' and relatedItem not in [i.id for i in contract.milestones]:
+                raise ValidationError(u"relatedItem should be one of milestones")
 
 
 class ContactPoint(BaseContactPoint):
