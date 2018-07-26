@@ -76,7 +76,6 @@ contract_edit_role = (whitelist(
     'title',
     'title_en',
     'title_ru',
-    'value',
 ))
 
 contract_view_role = (whitelist(
