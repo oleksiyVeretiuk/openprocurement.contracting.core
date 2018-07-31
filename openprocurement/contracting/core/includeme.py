@@ -3,17 +3,16 @@ from logging import getLogger
 from pkg_resources import get_distribution
 from pyramid.interfaces import IRequest
 
-from openprocurement.contracting.core.utils import (
-    isContract,
-    register_contract_contractType
-)
-from openprocurement.api.app import get_evenly_plugins
 from openprocurement.api.interfaces import IContentConfigurator
 from openprocurement.api.utils import get_plugin_aliases
+
 from openprocurement.contracting.core.adapters import ContractConfigurator
 from openprocurement.contracting.core.design import add_design
 from openprocurement.contracting.core.models import IContract
 from openprocurement.contracting.core.utils import (
+    isContract,
+    register_contract_contractType,
+    get_evenly_plugins,
     contract_from_data,
     extract_contract,
 )
