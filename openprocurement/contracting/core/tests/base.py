@@ -50,7 +50,7 @@ class PrefixedRequestClass(webtest.app.TestRequest):
 
 
 
-MOCK_CONFIG = connection_mock_config(PARTIAL_MOCK_CONFIG, ('plugins',), BASE_MOCK_CONFIG)
+MOCK_CONFIG = connection_mock_config(PARTIAL_MOCK_CONFIG, ('plugins', 'api', 'plugins'), BASE_MOCK_CONFIG)
 
 class BaseWebTest(BaseResourceWebTest):
     """
@@ -134,7 +134,6 @@ class Contract(SchematicsDocument, BaseContract):
     contractType = StringType(default='common')
     mode = StringType(choices=['test'])
     dateModified = IsoDateTimeType()
-    create_accreditation = 1
     documents = ListType(ModelType(Document), default=list())
     revisions = ListType(ModelType(Revision), default=list())
     owner_token = StringType(default=lambda: uuid4().hex)

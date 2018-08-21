@@ -1,15 +1,8 @@
 PARTIAL_MOCK_CONFIG = {
-    "api": {
-      "plugins": {
-        "contracting.core": {
-            "migration": False,
-            "aliases": []
-        },
-        "transferring": {
-            "plugins": {
-                "contracting.transferring": None
-            }
+    "contracting.core": None,
+    "transferring": {
+        "plugins": {
+            "contracting.transferring": None
         }
-      }
     }
 }

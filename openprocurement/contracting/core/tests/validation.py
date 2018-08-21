@@ -290,7 +290,9 @@ class TestValidateContractData(unittest.TestCase):
     @patch('openprocurement.contracting.core.validation.validate_data')
     @patch('openprocurement.contracting.core.validation.validate_json_data')
     @patch('openprocurement.contracting.core.validation.update_logging_context')
+    @patch('openprocurement.contracting.core.validation.validate_accreditations')
     def test_validate_contract_data_no_error(self,
+                                             mocker_validate_accreditations,
                                              mocker_update_logging_context,
                                              mocker_validate_json_data,
                                              mocker_validate_data):
@@ -306,10 +308,16 @@ class TestValidateContractData(unittest.TestCase):
     @patch('openprocurement.contracting.core.validation.error_handler')
     @patch('openprocurement.contracting.core.validation.validate_json_data')
     @patch('openprocurement.contracting.core.validation.update_logging_context')
+    @patch('openprocurement.contracting.core.validation.validate_accreditations')
     def test_validate_contract_data_with_error(
-        self, mocker_update_logging_context, mocker_validate_json_data, mocker_error_handler
+        self,
+        mocker_validate_accreditations,
+        mocker_update_logging_context,
+        mocker_validate_json_data,
+        mocker_error_handler
     ):
         mocker_update_logging_context.return_value = True
+        mocker_validate_accreditations.side_effect = [Exception()]
         mocker_validate_json_data.return_value = {'id': 'fake_id'}
         checked_accreditation = MagicMock(return_value=False)
         mocker_error_handler.side_effect = error_handler
@@ -317,7 +325,6 @@ class TestValidateContractData(unittest.TestCase):
 
         with self.assertRaises(Exception) as cm:
             validate_contract_data(self.request)
-        self.assertEqual(self.request.errors.status, 403)
 
 
 def suite():
