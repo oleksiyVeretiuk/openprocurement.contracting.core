@@ -25,6 +25,7 @@ class TestIncludeme(unittest.TestCase):
         self.config.include("cornice")
 
     def test_includeme(self):
+        self.config.registry.accreditation = {}
         includeme(self.config, FAKE_PLUGIN_CONFIG)
 
         self.assertEquals(self.config.registry.contract_contractTypes, {})
