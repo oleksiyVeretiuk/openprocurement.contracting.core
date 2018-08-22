@@ -44,7 +44,7 @@ def includeme(config, plugin_map):
     LOGGER.info('End aliases')
 
     # add accreditation
-    config.registry.accreditation = {'contract': {}}
+    config.registry.accreditation['contract'] = {}
 
     # search for plugins
     get_evenly_plugins(config, plugin_map['plugins'], 'openprocurement.contracting.core.plugins')
