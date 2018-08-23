@@ -150,7 +150,7 @@ class Document(BaseDocument):
     )
     documentOf = StringType(
         required=True,
-        choices=['tender', 'item', 'lot', 'contract', 'change', 'milestone'],
+        choices=['tender', 'auction', 'item', 'lot', 'contract', 'change', 'milestone'],
         default='contract'
     )
     documentType = StringType(choices=documentType_choices)
