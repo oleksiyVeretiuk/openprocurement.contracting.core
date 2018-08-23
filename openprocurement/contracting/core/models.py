@@ -2,7 +2,7 @@
 from uuid import uuid4
 from zope.interface import implementer, Interface
 from pyramid.security import Allow
-from schematics.types import StringType, MD5Type
+from schematics.types import StringType, MD5Type, IntType
 from schematics.types.compound import ModelType
 from schematics.types.serializable import serializable
 from schematics.exceptions import ValidationError
@@ -154,6 +154,7 @@ class Document(BaseDocument):
         default='contract'
     )
     documentType = StringType(choices=documentType_choices)
+    index = IntType()
 
     def validate_relatedItem(self, data, relatedItem):
         if not relatedItem and data.get('documentOf') in ['item', 'change', 'milestone']:
