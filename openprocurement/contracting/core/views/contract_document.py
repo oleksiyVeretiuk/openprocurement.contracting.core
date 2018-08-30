@@ -3,7 +3,9 @@ from openprocurement.api.utils import (
     APIResource,
     json_view,
     context_unpack,
+    get_file,
 )
+from openprocurement.api.validation import validate_file_upload
 from openprocurement.contracting.core.utils import (
     apply_patch,
     contractingresource,
@@ -29,7 +31,7 @@ class CeasefireContractDocumentResource(APIResource):
 
     @json_view(
         content_type="application/json",
-        validators=(validate_contract_document,),
+        validators=(validate_file_upload,),
         permission='edit_contract')
     def collection_post(self):
         contract = self.request.validated['contract']
@@ -58,7 +60,10 @@ class CeasefireContractDocumentResource(APIResource):
 
     @json_view(content_type="application/json", permission='view_listing')
     def get(self):
-        return {'data': self.request.context.serialize("view")}
+        if self.request.params.get('download'):
+            return get_file(self.request)
+        document = self.request.validated['document']
+        return {'data': document.serialize("view")}
 
     @json_view(
             content_type="application/json",
