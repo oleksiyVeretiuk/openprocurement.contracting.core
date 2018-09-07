@@ -3,7 +3,7 @@ from openprocurement.api.plugins.transferring.validation import (
     validate_ownership_data
 )
 from openprocurement.contracting.core.plugins.transferring.validation import (
-    validate_contract_accreditation_level
+    validate_change_ownership_accreditation
 )
 
 from openprocurement.api.utils import (
@@ -27,7 +27,7 @@ from openprocurement.contracting.core.utils import (
 class ContractsResource(APIResource):
 
     @json_view(permission='create_contract',
-               validators=(validate_contract_accreditation_level,
+               validators=(validate_change_ownership_accreditation,
                            validate_ownership_data))
     def post(self):
         contract = self.request.validated['contract']
