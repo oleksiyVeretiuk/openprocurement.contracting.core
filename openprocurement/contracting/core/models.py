@@ -10,7 +10,7 @@ from schematics.transforms import whitelist, blacklist
 
 from openprocurement.api.validation import validate_items_uniq
 from openprocurement.api.utils import get_now
-from openprocurement.api.models.auction_models import (
+from openprocurement.api.models.schema import (
     AdditionalClassification as BaseAdditionalClassification,
     CPVClassification as BaseCPVClassification,
     Contract as BaseContract,
@@ -18,6 +18,7 @@ from openprocurement.api.models.auction_models import (
     IsoDateTimeType,
     Item as BaseItem,
     ListType,
+    flashItem,
     Model,
     Organization as BaseOrganization,
     Revision,
@@ -29,9 +30,8 @@ from openprocurement.api.models.common import (
     BaseResourceItem,
     ContactPoint as BaseContactPoint,
 )
-from openprocurement.auctions.core.models import (
+from openprocurement.api.models.roles import (
     Administrator_role,
-    flashItem,
     plain_role,
 )
 

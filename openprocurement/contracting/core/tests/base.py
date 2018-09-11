@@ -18,6 +18,9 @@ from openprocurement.api.models.auction_models import (
     Revision,
     schematics_default_role,
 )
+from openprocurement.api.models.roles import (
+    plain_role,
+)
 from openprocurement.api.constants import VERSION, SESSION
 from openprocurement.contracting.core.tests.fixtures import (
     contract_fixtures,
@@ -30,9 +33,6 @@ from openprocurement.api.tests.base import (
 
 
 from openprocurement.contracting.core.tests.fixtures.config import PARTIAL_MOCK_CONFIG
-from openprocurement.auctions.core.models import (
-    plain_role,
-)
 
 
 test_contract_data_wo_items = deepcopy(contract_fixtures.test_contract_data)
