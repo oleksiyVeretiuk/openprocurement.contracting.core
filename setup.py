@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '2.0.1+eacore'
+version = '2.0.2+eacore'
 
 requires = [
     'setuptools',
