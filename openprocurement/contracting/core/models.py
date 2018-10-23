@@ -144,6 +144,7 @@ class Document(BaseDocument):
         'contractSchedule',
         'contractSigned',
         'debarments',
+        'notice',
         'registerExtract',
         'rejectionProtocol',
         'subContract',
