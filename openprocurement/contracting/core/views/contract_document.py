@@ -75,7 +75,6 @@ class CeasefireContractDocumentResource(APIResource):
         manager = self.request.registry.getAdapter(contract, IContractManager).document_manager()
         manager.change_document(self.request)
 
-        manager.change_document(self.request)
         if apply_patch(self.request):
             self.LOGGER.info(
                 'Updated ceasefire contract document. '
