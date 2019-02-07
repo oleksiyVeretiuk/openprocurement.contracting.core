@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '2.0.3+eacore'
+VERSION = '2.0.4+eacore'
 
 requires = [
     'setuptools',
@@ -35,7 +35,7 @@ entry_points = {
 }
 
 setup(name='openprocurement.contracting.core',
-      version=version,
+      version=VERSION,
       description="",
       long_description=open("README.rst").read(),
       classifiers=[
